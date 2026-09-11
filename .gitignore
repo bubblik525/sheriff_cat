@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.sheriff-cat/
+state.json
+state.json.*
+demo.json
+demo.json.*
+*.lock
+*.tmp
+.DS_Store

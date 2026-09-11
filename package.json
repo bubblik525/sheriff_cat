@@ -1,0 +1,23 @@
+{
+  "name": "sheriff-cat-terminal",
+  "version": "0.1.1",
+  "description": "SHERIFF CAT \u2014 a read-only Robinhood Chain field terminal",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "sheriff-cat": "bin/sheriff.mjs"
+  },
+  "scripts": {
+    "start": "node bin/sheriff.mjs",
+    "demo": "node bin/sheriff.mjs --demo",
+    "test": "node --test test/*.test.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "private": true
+}
