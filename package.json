@@ -1,6 +1,6 @@
 {
   "name": "sheriff-cat-terminal",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "SHERIFF CAT \u2014 a read-only Robinhood Chain field terminal",
   "type": "module",
   "engines": {

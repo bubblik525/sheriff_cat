@@ -16,9 +16,11 @@ export class Provider {
     this.status = 'NOT CHECKED';
   }
   async json(url, body) {
-    const host=new URL(url).hostname;
-    for(let n=0;n<3;n++){
-      const at=Math.max(Date.now(),this.next[host]||0);this.next[host]=at+400;await sleep(at-Date.now());
+    const host = new URL(url).hostname;
+    for (let n = 0; n < 3; n++) {
+      const at = Math.max(Date.now(), this.next[host] || 0);
+      this.next[host] = at + 400;
+      await sleep(at - Date.now());
       let response;
       try {
         this.calls++;
@@ -134,12 +136,21 @@ export class Provider {
     const known = new Map(state.tokens.map((t) => [t.address, t]));
     for (const t of tokens) if (!known.has(t.address)) known.set(t.address, t);
     const sorted = [...known.values()].sort((a, b) => b.block - a.block);
-    const pinned = sorted.filter((t) => state.watch?.[t.address]);
+    const pinned = sorted.filter(
+      (t) =>
+        state.watch?.[t.address] ||
+        state.trading?.paper.some(
+          (p) => !p.closedAt && p.address === t.address,
+        ) ||
+        state.trading?.rules.some((r) => r.address === t.address),
+    );
     const keep = new Map(
-      [...pinned, ...sorted.filter(t=>!state.watch?.[t.address]).slice(0, 5000 - pinned.length)].map((t) => [
-        t.address,
-        t,
-      ]),
+      [
+        ...pinned,
+        ...sorted
+          .filter((t) => !pinned.includes(t))
+          .slice(0, 5000 - pinned.length),
+      ].map((t) => [t.address, t]),
     );
     state.tokens = [...keep.values()].sort((a, b) => b.block - a.block);
     state.start ??= from;
@@ -147,7 +158,7 @@ export class Provider {
     state.lastScan = Date.now();
     return tokens;
   }
-  async markets(addresses) {
+  async markets(addresses, pair = null) {
     const a = [...new Set(addresses.filter(validAddress))].slice(0, 30);
     if (!a.length) return [];
     const result = await this.json(
@@ -158,6 +169,7 @@ export class Provider {
       const pairs = result
         .filter(
           (p) =>
+            (!pair || p.pairAddress?.toLowerCase() === pair.toLowerCase()) &&
             p.chainId === 'robinhood' &&
             p.baseToken?.address?.toLowerCase() === address.toLowerCase(),
         )
@@ -172,6 +184,7 @@ export class Provider {
               market: {
                 price: numeric(p.priceUsd),
                 change: numeric(p.priceChange?.h24),
+                buys: numeric(p.txns?.h1?.buys),
                 volume: numeric(p.volume?.h24),
                 liquidity: numeric(p.liquidity?.usd),
                 pair: p.pairAddress,
@@ -182,10 +195,63 @@ export class Provider {
         : [];
     });
   }
+  async transfers(address) {
+    if (!validAddress(address)) throw Error('Invalid public address');
+    const result = await this.json(
+      `https://api.blockscout.com/4663/api/v2/addresses/${address}/token-transfers`,
+    );
+    if (!Array.isArray(result.items)) throw Error('Invalid transfer response');
+    const items = result.items.slice(0, 50).flatMap((t) => {
+      if (
+        typeof t.transaction_hash !== 'string' ||
+        !Number.isSafeInteger(t.log_index)
+      )
+        return [];
+      const from = t.from?.hash?.toLowerCase(),
+        to = t.to?.hash?.toLowerCase();
+      if (from !== address && to !== address) return [];
+      let value = String(t.total?.value ?? '?') + ' raw';
+      const decimals = Number(t.token?.decimals);
+      if (
+        /^\d+$/.test(String(t.total?.value)) &&
+        Number.isInteger(decimals) &&
+        decimals >= 0 &&
+        decimals <= 36
+      ) {
+        const digits = String(t.total.value).padStart(decimals + 1, '0');
+        value = decimals
+          ? digits.slice(0, -decimals) + '.' + digits.slice(-decimals)
+          : digits;
+      }
+      return [
+        {
+          id: `${t.transaction_hash}:${t.log_index}:${t.total?.token_id || ''}`,
+          tx: t.transaction_hash,
+          from,
+          to,
+          direction:
+            from === address && to === address
+              ? 'SELF'
+              : to === address
+                ? 'IN'
+                : 'OUT',
+          symbol: String(t.token?.symbol || '?'),
+          value,
+          timestamp: t.timestamp || null,
+        },
+      ];
+    });
+    return { items, truncated: !!result.next_page_params };
+  }
   async quote(address) {
     const result = await this.markets([address]);
     const m = result[0]?.market;
-    if (!m || !Number.isFinite(m.price) || m.price <= 0 || !validAddress(m.pair))
+    if (
+      !m ||
+      !Number.isFinite(m.price) ||
+      m.price <= 0 ||
+      !validAddress(m.pair)
+    )
       throw Error('No indexed price for this token');
     return { address, price: m.price, pair: m.pair, observedAt: m.observedAt };
   }

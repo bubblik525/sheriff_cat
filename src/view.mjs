@@ -1,4 +1,5 @@
 import { clean, short, usd, pct, summary, clones } from './core.mjs';
+import { tradeLines } from './trading.mjs';
 export const TABS = [
   'RADAR',
   'DEV COUNTER',
@@ -7,6 +8,7 @@ export const TABS = [
   'CLONES',
   'GUESS MOVE',
   'DAILY',
+  'RESEARCH',
 ];
 const tones = {
   normal: '\x1b[38;2;199;215;210m',
@@ -36,9 +38,12 @@ export function tokenRows(app) {
   );
 }
 export function selected(app) {
+  if (app.tab === 7 && app.tradePick)
+    return app.state.tokens.find((t) => t.address === app.tradePick) || null;
   if (app.tab === 5 && app.gamePick)
     return app.state.tokens.find((t) => t.address === app.gamePick) || null;
-  if(app.tab===4)return clones(app.state.tokens.slice(0,500))[app.index]?.a||null;
+  if (app.tab === 4)
+    return clones(app.state.tokens.slice(0, 500))[app.index]?.a || null;
   const rows = tokenRows(app);
   return rows[Math.min(app.index, rows.length - 1)] || null;
 }
@@ -80,9 +85,9 @@ export function render(app, width = 120, height = 38, color = true) {
     'dim',
   );
   if (Math.floor(now / 1000) % 8 === 0) cat[3] = cat[3].replace('o  o', '-  -');
-  const compact=height<34;
-  if(compact)add(' SHERIFF CAT / * LOCAL PATROL *','bright');
-  for (let i = 0; i < (compact?0:6); i++)
+  const compact = height < 34;
+  if (compact) add(' SHERIFF CAT / * LOCAL PATROL *', 'bright');
+  for (let i = 0; i < (compact ? 0 : 6); i++)
     add(
       fit(logo[i] || '', Math.min(66, width - 23)) + fit(cat[i + 1], 20),
       'bright',
@@ -98,7 +103,7 @@ export function render(app, width = 120, height = 38, color = true) {
   add('-'.repeat(width), 'dim');
   add(
     (width < 110
-      ? ['RADAR', 'DEV', 'WATCH', 'WEATHER', 'CLONES', 'GUESS', 'DAILY']
+      ? ['RADAR', 'DEV', 'WATCH', 'WEATHER', 'CLN', 'GAME', 'DAY', 'DESK']
       : TABS
     )
       .map(
@@ -111,25 +116,33 @@ export function render(app, width = 120, height = 38, color = true) {
   const leftWidth = width >= 106 ? Math.floor(width * 0.66) : width - 2,
     rightWidth = width - leftWidth - 3,
     split = width >= 106,
-    bodyHeight = height - (compact?10:15),
+    bodyHeight = height - (compact ? 10 : 15),
     left = [],
     right = [];
   const l = (text, tone = 'normal') => left.push(p(text, tone)),
     r = (text, tone = 'normal') => right.push(p(text, tone));
   l(
-    ` ${TABS[app.tab]} / ${app.filter ? 'FILTER: ' + app.filter : 'FIELD OBSERVATIONS'}`,
+    ` ${TABS[app.tab]} / ${app.tab === 7 ? (app.tradePage || 'alerts').toUpperCase() : app.filter ? 'FILTER: ' + app.filter : 'FIELD OBSERVATIONS'}`,
     'green',
   );
   if (app.showReport && app.report) {
     l(' CASE FILE / ESC to return', 'bright');
-    const wrapped=app.report.lines.flatMap(x=>{const parts=[];const text=clean(x,1000);for(let n=0;n<text.length;n+=leftWidth-3)parts.push(text.slice(n,n+leftWidth-3));return parts});
-    wrapped.slice(app.detailScroll||0).forEach(x=>l(' '+x));
-    l(' UP/DOWN scroll evidence / ESC return','dim');
+    const wrapped = app.report.lines.flatMap((x) => {
+      const parts = [];
+      const text = clean(x, 1000);
+      for (let n = 0; n < text.length; n += leftWidth - 3)
+        parts.push(text.slice(n, n + leftWidth - 3));
+      return parts;
+    });
+    wrapped.slice(app.detailScroll || 0).forEach((x) => l(' ' + x));
+    l(' UP/DOWN scroll evidence / ESC return', 'dim');
   } else if (app.help) {
     [
       'KEYBOARD / NO MOUSE NEEDED',
       '',
-      '1..7           Switch desk',
+      '1..8           Switch desk',
+      ':              Research command (examples on desk 8)',
+      'Left/Right     Research subpage (desk 8)',
       'Up/Down, j/k   Select token / scroll desk',
       'PgUp/PgDn      Jump ten rows',
       '/              Filter tokens (Enter applies)',
@@ -148,7 +161,15 @@ export function render(app, width = 120, height = 38, color = true) {
       'No wallet connection. No signing. No trades.',
       'Keys are kept in memory; not written to disk.',
       'Unknown evidence is never a safe verdict.',
-    ].slice(app.detailScroll||0).forEach((x) => l(x));
+    ]
+      .slice(app.detailScroll || 0)
+      .forEach((x) => l(x));
+  } else if (app.tab === 7) {
+    l(' < ALERTS | CHANGES | WALLETS | PAPER >', 'bright');
+    l(' Left/right switch; : command; up/down scroll', 'dim');
+    tradeLines(s, app.tradePage || 'alerts')
+      .slice(app.index)
+      .forEach((x) => l(' ' + x));
   } else if (app.tab === 0 || app.tab === 1 || app.tab === 2) {
     if (app.tab === 1) {
       l(' Paste a TOKEN address with D to trace its creator.', 'dim');
@@ -311,12 +332,12 @@ export function render(app, width = 120, height = 38, color = true) {
   add('-'.repeat(width), 'dim');
   add(
     app.input
-      ? ` > ${app.input.kind === 'dev' ? 'CONTRACT' : 'FILTER'}: ${app.input.value}_`
+      ? ` > ${app.input.kind === 'command' ? 'COMMAND' : app.input.kind === 'dev' ? 'CONTRACT' : 'FILTER'}: ${app.input.value}_`
       : ` ${clean(app.message || 'SMALL CAT. BIG CLUES.')} `,
     app.error ? 'red' : 'gold',
   );
   add(
-    ' 1-7 desks  arrows select  / filter  D dev  Enter inspect  W watch  E export  ? help  Q quit',
+    ' 1-8 desks  : command  / filter  Enter dossier  W watch  ? help  Q quit',
     'dim',
   );
   return paint(out, width, height, color);

@@ -12,7 +12,7 @@ Actual terminal output from the offline **DEMO / SIMULATED** session, captured f
 | --- | --- |
 | ![Local prediction game](docs/screenshots/02-game.jpg) | ![Daily briefing](docs/screenshots/03-daily.jpg) |
 
-## Seven desks
+## Research desks
 
 | Desk | What you can do |
 | --- | --- |
@@ -23,6 +23,7 @@ Actual terminal output from the offline **DEMO / SIMULATED** session, captured f
 | CLONE DETECTOR | Compare similar names and tickers and their observed order. |
 | GUESS THE MOVE | Predict higher/lower over five minutes for local points. |
 | SHERIFF DAILY | Read and export a UTC daily briefing as text and JSON. |
+| RESEARCH DESK | Custom alerts, change history, public address monitoring, size models and paper positions. |
 
 ## Run
 
@@ -60,7 +61,9 @@ Use a terminal at least 106 columns wide for the two-pane layout; 120 × 38 is r
 
 | Key         | Action                                                  |
 | ----------- | ------------------------------------------------------- |
-| 1–7         | Radar, creator, watchlist, weather, clones, game, daily |
+| 1–8         | Radar, creator, watchlist, weather, clones, game, daily, research |
+| :           | Enter a research command; Enter submits, Esc cancels |
+| ← →         | Switch Alerts / Changes / Wallets / Paper on desk 8 |
 | ↑ ↓ / j k   | Select a row; scroll open evidence or help                  |
 | PgUp / PgDn | Jump 10 records                                         |
 | /           | Filter names, tickers, addresses; empty input clears    |
@@ -97,7 +100,7 @@ Tokens can contain malicious text; the renderer strips non-ASCII control charact
 2. Скачайте репозиторий через **Code → Download ZIP** и распакуйте его.
 3. Откройте терминал в распакованной папке и выполните `node bin/sheriff.mjs --demo`.
 4. Для настоящих данных создайте свой PRO API-ключ в [Blockscout](https://dev.blockscout.com/), запустите `node bin/sheriff.mjs` и вставьте ключ в скрытый ввод.
-5. Переключайте вкладки клавишами **1–7**, выбирайте монету стрелками, **Enter** открывает досье, **W** добавляет в избранное, **?** показывает справку.
+5. Переключайте вкладки клавишами **1–8**, выбирайте монету стрелками, **Enter** открывает досье, **W** добавляет в избранное, **?** показывает справку.
 
 Подключать кошелёк не нужно. Это отдельная программа для компьютера; браузер и сайт для её работы не требуются. Неизвестные показатели остаются неизвестными: программа не выдаёт токену фиктивный рейтинг безопасности.
 
@@ -128,5 +131,49 @@ python3 test/pty_smoke.py
 The Python pseudoterminal check runs on macOS/Linux. GitHub Actions runs Node tests and snapshot startup on Linux, macOS and Windows with Node 22 and 24; keyboard integration runs on Linux/macOS.
 
 Tests cover archive validation and locking, rendering, clone selection, quote identity, game settlement, API failure handling and credential isolation. The keyboard integration exercises navigation, filtering, creator lookup, watchlist persistence, predictions, daily export and clean shutdown. API tests use controlled responses: passing them does **not** certify current external provider availability or your key's permissions.
+
+## Research Desk (v0.2.0)
+
+Select a token in Radar, then press **8**. Your selected token stays fixed while you scroll this desk. Use **Left/Right** for its four pages, **Up/Down** to scroll and **:** to type a command. Commands also work directly from Radar. The examples below include the `:` key you press to open the command input.
+
+| Command | Result |
+| --- | --- |
+| `:alert liquidity>=20000,volume>50000` | Alert for the selected token when **both** conditions become true. |
+| `:alert all change>10,buys>=20` | Apply a rule to tokens with fresh market observations in the monitored sample. |
+| `:unalert ID` | Remove a rule using its displayed eight-character ID. |
+| `:alerts` / `:changes` / `:wallets` / `:paper` | Open the corresponding research page. |
+| `:wallet 0x...` | Monitor a public address; paste the full address. |
+| `:unwallet 0x...` | Stop monitoring an address. |
+| `:size 100 30 50` | Model a $100 entry, 30 bps fee and 50 bps additional slippage. |
+| `:paper 100 10 20 30 50` | Open a $100 virtual position: 10% stop, 20% target, 30 bps fee, 50 bps additional slippage. |
+| `:close ID` | Close an open virtual position at the next available modeled fill. |
+
+**1 basis point (bps) = 0.01%.** Fees/slippage default to 30/50 bps; stop/target default to 10/20%. No money moves. API keys remain personal and memory-only.
+
+### Signals and changes
+
+Rules accept `price` (USD), `liquidity` (USD), `volume` (rolling 24-hour USD volume), `change` (24-hour percentage change), and `buys` (one-hour buy transaction count, **not unique buyers**). Supported operators: `>`, `>=`, `<`, `<=`; comma-separated conditions use AND. Matches appear in the persistent Alerts list and status/event line. They do not repeat until a fresh known observation fails the conditions and a later one passes. Missing fields do not rearm the alert.
+
+Up to 50 rules are stored. Rules on a particular token add it to the polling set. An `all` rule covers the sampled tokens being refreshed, **not the whole chain**. Providers can lag; alerts require a locally observed price no older than 120 seconds. Notifications are in the terminal, not Telegram/email or OS push; the program must be running.
+
+Changes compare consecutive saved market observations, including the last observation from the previous session. Price changes of at least 3% and liquidity/rolling-volume changes of at least 10% enter the log. A pool switch is labeled and resets the comparison. This is sampled history, not every transaction, and small consecutive changes are not accumulated. Latest 300 alerts and 300 changes are retained. Press **E** to export the daily report plus the research state in JSON.
+
+### Public address monitoring
+
+Up to 10 addresses, checked about once a minute while collection is active. Reads the latest 50 token transfers from each address via Blockscout. The first read is labeled HISTORY; later observations are deduplicated by transaction/log identity. If the provider returns another page, the UI explicitly reports a partial window. Transfers can be missed during heavy activity or downtime; this is not a full backfill. Latest 500 transfers are retained. Amounts use token decimals when available, otherwise they are labeled raw units. IN/OUT means a transfer direction, **not a decoded buy/sell or proof of trader profitability**. Reorganizations and provider indexing can affect the feed.
+
+### Size model and paper positions
+
+The model assumes an equal-value constant-product pool with quote-side reserve `R = reported USD liquidity / 2`. For an entry amount `A`, fee fraction `f`, additional slippage fraction `s`, and spot price `P`, estimated tokens are `(R/P) × A(1−f) / (R + A(1−f)) × (1−s)`. Selling applies the reverse curve and both exit costs. The displayed curve premium is `A(1−f)/R` and is distinct from the all-in cost.
+
+**This is a hypothetical scenario, not an executable router quote.** Actual reserves/pool type are not verified; concentrated liquidity, taxes, gas, MEV and routing are not modeled. No result is shown if fresh price or positive liquidity is missing. Your selected fee and slippage assumptions are stored with the position.
+
+Paper cash starts at **$10,000**, with up to 20 open positions and 200 retained position records. Stops/targets are percentages of entry **spot price**. Net PnL includes modeled entry/exit costs. Automatic exits use a fresh observed quote from the original pool, even if it has already moved past your target/stop; they do not invent fills exactly at the threshold. No candles or intrapoll highs/lows are inferred. If the pool or fresh data is unavailable, the position stays open and is marked stale. On restart, evaluation resumes at the next available observation; it cannot reconstruct missed exits. Paper monitoring continues while launch collection is paused, but stops when the app closes. DEMO prices are synthetic and are not backtest results.
+
+### Combined dossier
+
+**Enter** opens the selected token's contract address, creator, creator-launch count in the retained archive, price, liquidity, pool identity, market observation time, evidence check time, verification status, first-ten-listed-holder concentration, proxy information and source coverage. Missing checks stay UNKNOWN / NOT CHECKED; no safety percentage is invented.
+
+Provider schema references: [DEX Screener API](https://docs.dexscreener.com/api/reference), [Blockscout address controller](https://github.com/blockscout/blockscout/blob/master/apps/block_scout_web/lib/block_scout_web/controllers/api/v2/address_controller.ex).
 
 The application is read-only. It does not sign transactions, execute trades or promise returns. SHERIFF CAT's own token receives no special safety exemption.
