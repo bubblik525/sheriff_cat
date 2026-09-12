@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>SHERIFF CAT / Companion</title>
+    <link rel="icon" href="/cat.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <aside class="rail">
+      <a class="brand" href="#"
+        ><img src="/cat.svg" alt="" />SHERIFF<span>CAT / COMPANION</span></a
+      >
+      <div class="rail-label">YOUR FIELD STATION</div>
+      <nav id="navigation" aria-label="Main navigation"></nav>
+      <div class="rail-bottom">
+        <span class="signal"></span> ROBINHOOD CHAIN<br /><small
+          >Local. Read-only. Yours.</small
+        ><button data-tab="settings" class="settings-link">
+          ⚙ Settings <span>08</span>
+        </button>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <span class="live-dot"></span
+          ><span id="connection">LOCAL COMPANION</span>
+        </div>
+        <div>
+          <span id="mode" class="tag">STARTING</span
+          ><button id="refresh" title="Refresh observations">↻ Refresh</button
+          ><time id="clock"></time>
+        </div>
+      </header>
+      <div class="page-heading">
+        <div>
+          <div class="eyebrow">SMALL CAT. BIG CLUES.</div>
+          <h1 id="page-title">Your little edge.</h1>
+          <p id="subtitle">
+            A curious companion. A clearer view of the market.
+          </p>
+        </div>
+        <button class="access-badge" data-tab="access">
+          <span>✧</span>
+          <div id="access-label">
+            SCOUT ACCESS<small>Based on SHERIFF CAT quantity</small>
+          </div>
+          <b>↗</b>
+        </button>
+      </div>
+      <div class="layout">
+        <aside class="pet-column">
+          <section class="pet-card">
+            <div class="card-top">
+              <span>FIELD COMPANION / 001</span
+              ><span class="status-pip">● AWAKE</span>
+            </div>
+            <div class="pet-name">
+              <h2 id="pet-name">Miso</h2>
+              <span id="pet-level">LVL 01</span>
+            </div>
+            <div
+              id="habitat"
+              tabindex="0"
+              role="button"
+              aria-label="Play with your cat. Move the cursor or press Enter."
+            >
+              <div class="orbit orbit-one"></div>
+              <div class="orbit orbit-two"></div>
+              <div class="coordinate c-one">+ 046.63</div>
+              <div class="coordinate c-two">+ SC-001</div>
+              <div class="floor"></div>
+              <div id="cat-motion">
+                <svg
+                  id="pet-svg"
+                  viewBox="0 0 260 290"
+                  aria-label="A cute silver and black sheriff cat with a big hat and curled tail"
+                  role="img"
+                >
+                  <defs>
+                    <pattern
+                      id="scan"
+                      width="3"
+                      height="4"
+                      patternUnits="userSpaceOnUse"
+                    >
+                      <path
+                        d="M0 1H3"
+                        stroke="#d6e2e8"
+                        stroke-opacity=".16"
+                        stroke-width=".7"
+                      />
+                    </pattern>
+                    <linearGradient id="fur" x1="0" x2="1" y2="1">
+                      <stop stop-color="#313b42" />
+                      <stop offset="1" stop-color="#0c1014" />
+                    </linearGradient>
+                    <linearGradient id="silver" x2=".8" y2="1">
+                      <stop stop-color="#f4f7fa" />
+                      <stop offset=".5" stop-color="#a8b8c3" />
+                      <stop offset="1" stop-color="#66757e" />
+                    </linearGradient>
+                  </defs>
+                  <ellipse
+                    cx="137"
+                    cy="266"
+                    rx="83"
+                    ry="9"
+                    fill="#000"
+                    opacity=".5"
+                  />
+                  <g class="cat-body">
+                    <path
+                      d="M81 181Q65 201 66 230Q61 250 78 254L96 250H163Q188 259 192 239Q196 209 179 184Z"
+                      fill="url(#fur)"
+                      stroke="#b8c8d3"
+                      stroke-width="2"
+                    />
+                    <path
+                      class="tail"
+                      d="M176 238C229 255 240 213 220 198C209 190 204 199 208 208C225 232 190 229 172 236"
+                      fill="url(#fur)"
+                      stroke="#c8d5dd"
+                      stroke-width="2.5"
+                    />
+                    <path
+                      d="M94 204L90 244Q89 257 105 257Q118 257 119 247L124 211M144 209L144 246Q143 258 159 257Q172 257 171 246L164 202"
+                      fill="url(#fur)"
+                      stroke="#bdcbd3"
+                      stroke-width="2"
+                    />
+                    <path
+                      d="M98 250V256M105 250V257M152 250V256M160 250V256"
+                      stroke="#e4edf2"
+                      stroke-width="2"
+                    />
+                    <path
+                      class="bandana"
+                      d="M91 180L135 220L180 181"
+                      fill="#b8c8d3"
+                      stroke="#e9f0f4"
+                    />
+                    <g class="head">
+                      <path
+                        d="M62 104L55 48Q56 40 65 47L98 70M162 66L200 45Q208 41 207 53L203 104"
+                        fill="url(#fur)"
+                        stroke="#cfdae2"
+                        stroke-width="2.5"
+                      />
+                      <path
+                        d="M67 60L72 85L86 74M196 58L177 73L197 84"
+                        fill="#7c8b96"
+                      />
+                      <path
+                        d="M55 130Q55 91 91 85Q131 74 175 86Q211 92 211 133Q214 177 172 190Q131 205 87 188Q49 179 55 130Z"
+                        fill="url(#fur)"
+                        stroke="#d1dee6"
+                        stroke-width="2.5"
+                      />
+                      <path
+                        d="M55 130Q55 91 91 85Q131 74 175 86Q211 92 211 133Q214 177 172 190Q131 205 87 188Q49 179 55 130Z"
+                        fill="url(#scan)"
+                      />
+                      <ellipse
+                        class="cheek"
+                        cx="82"
+                        cy="158"
+                        rx="11"
+                        ry="5"
+                        fill="#d4e4eb"
+                      />
+                      <ellipse
+                        class="cheek"
+                        cx="188"
+                        cy="158"
+                        rx="11"
+                        ry="5"
+                        fill="#d4e4eb"
+                      />
+                      <g class="eyes">
+                        <ellipse
+                          cx="101"
+                          cy="137"
+                          rx="16"
+                          ry="19"
+                          fill="#edf4f7"
+                        />
+                        <ellipse
+                          cx="169"
+                          cy="137"
+                          rx="16"
+                          ry="19"
+                          fill="#edf4f7"
+                        />
+                        <ellipse
+                          class="pupil"
+                          cx="104"
+                          cy="134"
+                          rx="8"
+                          ry="11"
+                          fill="#10161a"
+                        />
+                        <ellipse
+                          class="pupil"
+                          cx="172"
+                          cy="134"
+                          rx="8"
+                          ry="11"
+                          fill="#10161a"
+                        />
+                        <circle
+                          class="pupil"
+                          cx="101"
+                          cy="129"
+                          r="3.5"
+                          fill="white"
+                        />
+                        <circle
+                          class="pupil"
+                          cx="169"
+                          cy="129"
+                          r="3.5"
+                          fill="white"
+                        />
+                        <circle cx="108" cy="141" r="2" fill="white" />
+                        <circle cx="176" cy="141" r="2" fill="white" />
+                      </g>
+                      <path
+                        d="M94 114Q101 111 107 115M163 115Q169 111 175 114"
+                        stroke="#dce8ef"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M130 153H140L135 159ZM135 159Q134 167 126 166M135 159Q139 167 144 165"
+                        fill="#e9f0f4"
+                        stroke="#e9f0f4"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M72 149L87 152M70 161L85 160M184 153L199 149M185 160L201 162"
+                        stroke="#bacbd5"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <g class="hat">
+                        <path
+                          d="M85 83Q99 25 119 30L143 38Q156 23 169 37L189 90"
+                          fill="url(#silver)"
+                          stroke="#f2f6f8"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M85 77Q135 86 185 81L189 91L82 91Z"
+                          fill="#171e23"
+                        />
+                        <path
+                          d="M38 83Q52 72 79 83Q128 99 196 84Q223 78 229 91Q233 104 205 112Q150 124 84 109Q32 99 38 83Z"
+                          fill="url(#silver)"
+                          stroke="#ecf3f7"
+                          stroke-width="2"
+                        />
+                        <path
+                          d="M135 45L141 57L155 59L145 69L147 82L135 76L123 82L125 69L115 59L129 57Z"
+                          fill="#152027"
+                          stroke="#d6e1e8"
+                        />
+                      </g>
+                    </g>
+                    <path
+                      d="M136 187L140 196L150 197L143 204L145 214L136 209L127 214L129 204L122 197L132 196Z"
+                      fill="url(#silver)"
+                      stroke="#eff7fb"
+                    />
+                    <path
+                      class="marshal"
+                      d="M113 216Q135 230 157 216"
+                      fill="none"
+                      stroke="#c0d8e5"
+                      stroke-width="2"
+                    />
+                  </g>
+                </svg>
+              </div>
+              <span id="fish-cursor"
+                ><svg
+                  width="40"
+                  height="24"
+                  viewBox="0 0 40 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M28 12Q16-2 3 12Q16 26 28 12L38 3V21Z"
+                    fill="#cee2ec"
+                  />
+                  <circle cx="10" cy="10" r="2" fill="#182630" /></svg
+              ></span>
+              <div class="habitat-hint">MOVE CLOSER. I DON’T BITE.</div>
+            </div>
+            <div class="pet-stats">
+              <div>
+                <span id="mood">Curious</span><span id="xp">0 / 100 XP</span>
+              </div>
+              <div class="meter"><i id="xp-bar"></i></div>
+              <div>
+                <small id="mood-detail">Mood 65 / 100</small
+                ><small id="fish-count">3 fish</small>
+              </div>
+            </div>
+            <div class="pet-buttons">
+              <button data-care="feed">♧ Feed</button
+              ><button data-care="play">✧ Play</button
+              ><button data-care="daily">＋ Daily</button>
+            </div>
+          </section>
+          <section class="speech">
+            <span>✦ MISO’S FIELD NOTE</span>
+            <p id="clue">Let’s find something worth a closer look.</p>
+            <small>FACTS & RULES / NO AI</small>
+          </section>
+          <div class="local-note">
+            ◈ Your API key stays in memory.<br />Nothing signs or moves funds.
+          </div>
+        </aside>
+        <main id="content" tabindex="-1"></main>
+      </div>
+      <footer>
+        <span id="storage-note">LOCAL PROFILE</span
+        ><span>SHERIFF CAT / COMPANION v0.3</span
+        ><span>NO WALLET CONNECTION REQUIRED ↗</span>
+      </footer>
+    </div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <dialog id="modal">
+      <button class="close-modal" aria-label="Close dialog">×</button>
+      <div id="modal-content"></div>
+    </dialog>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

@@ -1,23 +1,79 @@
 {
   "name": "sheriff-cat-terminal",
-  "version": "0.2.0",
-  "description": "SHERIFF CAT \u2014 a read-only Robinhood Chain field terminal",
+  "version": "0.4.0",
+  "description": "SHERIFF CAT - a rules-based market companion for Robinhood Chain",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.13.0"
   },
   "bin": {
     "sheriff-cat": "bin/sheriff.mjs"
   },
   "scripts": {
-    "start": "node bin/sheriff.mjs",
-    "demo": "node bin/sheriff.mjs --demo",
-    "test": "node --test test/*.test.mjs"
+    "start": "electron .",
+    "demo": "electron . --demo",
+    "terminal": "node bin/sheriff.mjs",
+    "test": "node --test test/*.test.mjs",
+    "web": "node bin/companion.mjs",
+    "web:demo": "node bin/companion.mjs --demo",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --publish never",
+    "postinstall": "node node_modules/electron/install.js",
+    "icon": "electron desktop/icon.cjs",
+    "dist:win": "electron-builder --win nsis --x64 --publish never",
+    "dist:mac": "electron-builder --mac --arm64 --x64 --publish never",
+    "smoke": "electron . --demo --smoke-test"
   },
   "files": [
     "bin",
     "src",
+    "companion",
+    "cloud",
     "README.md"
   ],
-  "private": true
+  "private": true,
+  "main": "desktop/main.mjs",
+  "author": "SHERIFF CAT",
+  "build": {
+    "appId": "run.sheriffcat.desktop",
+    "productName": "SHERIFF CAT",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "desktop/main.mjs",
+      "src/**",
+      "companion/**",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.finance",
+      "identity": null
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Finance"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "artifactName": "Sheriff-Cat-${version}-${os}-${arch}.${ext}",
+    "icon": "build/icon.png"
+  },
+  "devDependencies": {
+    "electron": "44.3.0",
+    "electron-builder": "26.15.3"
+  }
 }

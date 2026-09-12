@@ -1,0 +1,21 @@
+{
+  "name": "sheriff-cat-companions",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-12",
+  "observability": {
+    "enabled": true,
+    "traces": { "enabled": true, "head_sampling_rate": 0.01 },
+  },
+  "vars": {
+    "SHERIFF_TOKEN_CONTRACT": "",
+    "SHERIFF_TOKEN_THRESHOLDS": "",
+    "RPC_URL": "",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sheriff-cat-companions",
+      "database_id": "REPLACE_WITH_YOUR_D1_ID",
+    },
+  ],
+}

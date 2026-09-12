@@ -1,179 +1,179 @@
-# SHERIFF CAT — Field Terminal
+# SHERIFF CAT Desktop
 
-A standalone, read-only command-line app for Robinhood Chain / Pons. Runs on your machine, calls data providers directly, and does not require the SHERIFF CAT website, Cloudflare, a wallet or trading permissions.
+A standalone desktop companion for observing Robinhood Chain tokens, researching contracts and practicing with paper positions. No browser window, wallet signature or AI subscription required.
 
-## Screenshots
+## Download and open
 
-Actual terminal output from the offline **DEMO / SIMULATED** session, captured from a pseudoterminal and rendered as images. These are sample tokens, not live market results.
+The desktop version opens its own window. End users do not need Node.js. Build artifacts can be attached to this repository’s GitHub Releases:
 
-![Radar and token evidence](docs/screenshots/01-radar.jpg)
+- macOS: open the DMG and drag **SHERIFF CAT** into Applications.
+- Windows: run the `.exe` installer.
+- Linux: make the `.AppImage` executable and run it.
 
-| Guess the Move | Sheriff Daily |
-| --- | --- |
-| ![Local prediction game](docs/screenshots/02-game.jpg) | ![Daily briefing](docs/screenshots/03-daily.jpg) |
+These are currently unsigned preview builds. Public distribution without operating-system identity warnings requires signing/notarization; this repository contains no signing credentials. macOS Apple Silicon launch is verified locally. Windows x64 and macOS Intel installers are built on macOS; their native launch is not yet verified. GitHub Actions includes a native window smoke test on the Windows runner. Linux is configured but not built locally.
 
-## Research desks
+## Run from source
 
-| Desk | What you can do |
-| --- | --- |
-| NEW CAT RADAR | Follow newly observed Pons launches and inspect a selected contract. |
-| DEV COUNTER | Paste a contract and find launches from the same creator in your retained archive. |
-| CAT WATCHLIST | Star tokens locally and compare prices with the start of your session. |
-| MEME WEATHER | See the distribution of available 24-hour price changes. |
-| CLONE DETECTOR | Compare similar names and tickers and their observed order. |
-| GUESS THE MOVE | Predict higher/lower over five minutes for local points. |
-| SHERIFF DAILY | Read and export a UTC daily briefing as text and JSON. |
-| RESEARCH DESK | Custom alerts, change history, public address monitoring, size models and paper positions. |
-
-## Run
-
-Install **Node.js 22 or newer**. Download this folder from GitHub (or the source ZIP), open a terminal in it, and run:
+Install Node.js 24 LTS, then in this repository:
 
 ```sh
-node bin/sheriff.mjs
+npm ci
+npm start
 ```
 
-Or clone the repository:
+For simulated data: `npm run demo`. Use **File → Explore demo mode / Switch to live mode** to restart in the other mode. Live mode starts without an API key; enter your personal key in Settings. Demo and live profiles are separate. Keys remain in process memory and must be entered again after restarting.
+
+## Build installers
 
 ```sh
-git clone https://github.com/bubblik525/sheriff_cat.git
-cd sheriff_cat
-node bin/sheriff.mjs
+npm ci
+npm test
+npm run dist
 ```
 
-No dependency installation or build is needed. Try `node bin/sheriff.mjs --demo` first to explore every desk without an API key.
+Installers appear in `dist/`. `npm run pack` creates an unpacked application. The icon is included in `build/icon.png`; regenerate it with `npm run icon`.
 
-Create your personal PRO API key at https://dev.blockscout.com/ and paste it into the hidden prompt. It is kept in process memory and never saved by this app. You can alternatively supply `BLOCKSCOUT_API_KEY` through your environment. Do not enter a wallet private key or seed phrase.
+To publish the source, upload the **contents of this terminal-cli folder** to the root of `bubblik525/sheriff_cat`, including `package-lock.json`, `build/` and `.github/`. Do not upload `node_modules/`, `dist/`, keys or personal profiles. The included GitHub Actions workflow builds macOS, Windows and Linux artifacts when manually run or when a `v*` tag is pushed. Download the artifacts from Actions and attach the desired installers to a GitHub Release. It does not publish releases automatically.
 
-This package has **not been published to npm**. Do not assume `npx sheriff-cat` points to this project.
+## Local data and security
+
+**File → Open data folder** opens the profile directory. The desktop app uses the operating system’s application-data folder, separate from the old browser companion. A random loopback port and a fresh session credential protect its internal API. The interface is sandboxed and has no Node.js access. External websites open only after confirmation. Closing the app stops scanning and saves its profile; it does not run a background trading service.
+
+The older browser launcher remains available as `npm run web` or `npm run web:demo`. The ASCII command-line version remains `npm run terminal`.
+
+---
+
+# SHERIFF CAT / Companion
+
+**Small cat. Big clues.** A local, read-only market companion for Robinhood Chain / Pons. Raise a silver sheriff cat, investigate launches, watch conditions and practice with virtual positions. No AI, wallet connection or signatures.
+
+![Companion desktop interface, offline demo](docs/screenshots/04-companion.jpg)
+
+![Token quantity access tiers, not configured for production](docs/screenshots/05-token-access.jpg)
+
+Screenshots show the real interface running with explicitly simulated observations.
+
+## Start in one command
+
+Optional browser mode: install Node.js **24 or newer**, open this repository in a terminal and run:
 
 ```sh
-node bin/sheriff.mjs --demo            # Offline sample; explicitly marked DEMO
-node bin/sheriff.mjs --demo --snapshot # Print the sample screen, no raw terminal
-node bin/sheriff.mjs --doctor          # Check your key, chain ID and market endpoint
-node bin/sheriff.mjs --help
+node bin/companion.mjs --demo
+```
+
+Open the private `http://127.0.0.1:4177/#…` URL printed in your terminal. This optional launcher opens the browser interface instead of the desktop window. Keep the process running. Press Ctrl+C to stop.
+
+Demo is offline, clearly labeled, and uses fixed sample prices. It does not simulate profits or claim to be live. Demo and live profiles are separate.
+
+For real observations:
+
+```sh
+node bin/companion.mjs
+```
+
+Open **Settings**, enter a personal [Blockscout API key](https://dev.blockscout.com/), and connect. Keys stay in process memory, never in the saved profile. Add a public address for token access. An address is observed, not verified as yours.
+
+## A field station with a companion
+
+- **My companion:** animated sheriff cat, cursor reactions, play, feeding, daily fish, mood, experience and outfits.
+- **Token radar:** observed Pons launches, name/contract search, sorting, comparisons, meme weather and similar-name matches.
+- **Dossier:** creator, creator launches in the archive, available contract checks, holder concentration, market observations and freshness.
+- **Watch station:** local watchlist, custom threshold conditions, persisted changes and public-address transfers.
+- **Paper desk:** entry-size estimates, virtual positions, stop/target handling, modeled fees/slippage, and a one-minute prediction game.
+- **Daily dispatch:** UTC observation chart, daily report, clipboard copy and text export.
+- **Token access:** four configurable quantity-based tiers, separate from cat XP.
+
+All interface text and cat messages are in English. Pet reactions use rules, not an AI model. The original ASCII terminal remains available with `node bin/sheriff.mjs`; see [Field Terminal documentation](FIELD-TERMINAL.md).
+
+## Token access
+
+| Tier    | Watched coins | Conditions | Compare coins | Daily fish |
+| ------- | ------------: | ---------: | ------------: | ---------: |
+| Scout   |             5 |          3 |             2 |          3 |
+| Deputy  |            15 |         10 |             3 |          5 |
+| Sheriff |            40 |         25 |             5 |          8 |
+| Marshal |           100 |         50 |             8 |         12 |
+
+The **actual number of SHERIFF CAT tokens**, not USD value, trade count or XP, determines access. ERC-20 `balanceOf` and `decimals` are read at one block and compared using integer arithmetic. Missing, failed or expired checks grant base access. Live mode verifies the chain ID.
+
+**The contract and quantity thresholds are intentionally not configured yet.** Until configured, live mode grants Scout access. Preview tiers in offline Demo under Token access.
+
+Owner configuration uses environment variables:
+
+```text
+SHERIFF_TOKEN_CONTRACT=<actual ERC-20 contract>
+SHERIFF_TOKEN_THRESHOLDS=<deputy quantity>,<sheriff quantity>,<marshal quantity>
+```
+
+Exactly three positive increasing decimal quantities are required. No production values are invented. Access checks refresh approximately once a minute; cached grants expire after five minutes. Excess saved watch entries and conditions survive a downgrade, but only the first allowed slots receive priority monitoring / rule evaluation. Existing virtual positions remain monitored.
+
+Fish are access bonuses; **no tokens are spent**. All users receive the same honest evidence. SHERIFF CAT has no privileged risk score. Outfits unlock through token access; pet level does not grant higher access.
+
+## Pet rules
+
+- 100 XP per level, at most 100 XP per UTC day.
+- Dossier: 25 XP. Comparison: 15 XP. Paper review: 20 XP.
+- Daily fish: 10 XP; one claim per UTC date regardless of tier changes.
+- Feed/play: 5 XP; one reward per action per minute. Visual jumps grant no XP.
+- Mood gently decays to a floor of 20; losses never punish the pet.
+- Cloud mode limits each research task type to one award per day. These are engagement rewards, not proof of attention or trading.
+
+## Storage and optional cloud progress
+
+Local data lives in `~/.sheriff-cat/companion`. Use `--data-dir PATH` to choose another directory and `--port 4178` if occupied. Atomic saves and a lock prevent concurrent local writers.
+
+The server binds only to `127.0.0.1`. A random private session URL unlocks API access; foreign origins, unexpected hosts and unauthenticated requests are rejected. Treat the URL as private. Private wallet keys are never requested.
+
+The optional [Cloudflare D1 service](cloud/README.md) stores authoritative pet progress, checks holder access server-side and rejects duplicate/concurrent awards. It is supplied as source and is **not deployed or enabled by default**. Set `SHERIFF_CLOUD_URL` to enable your deployed service. Demo never syncs. Market history, personal provider keys and paper positions remain local.
+
+Local files and open-source clients can be modified by their owners. Cloud rules protect shared progression, not an arbitrary client's UI. Without a wallet signature, anyone can observe a qualifying public address. Do not use these levels for monetary payouts or scarce financial rewards.
+
+## Data and trading limits
+
+- Launches: factory observations every 8 seconds, 12-block lag, bounded 2,000-block scans, up to 5,000 retained tokens. Not a complete chain index.
+- Markets: available DexScreener pools approximately every 30 seconds, up to 100 prioritized tokens. Retrieval time is not last-trade time.
+- Addresses: latest 50 provider transfers every minute, up to 10 addresses. Incomplete windows are labeled. IN/OUT is not BUY/SELL.
+- Dossier: source verification, first listed holders and creator metadata. Mint permissions, taxes, blacklist and LP lock are **not checked**. Unknown never implies safe.
+- Paper: hypothetical constant-product reserves inferred from liquidity, fees/slippage on both sides, no gas/tax/MEV. Stops fill at observed prices and can miss intrapoll moves. Stale/wrong-pool quotes cannot settle positions.
+- Predictions use a fresh same-pool observation within two minutes of the deadline; otherwise void. Fixed demo prices normally produce draws.
+- Monitoring and virtual exits require the program to remain open. Cloud pet sync is not a background trading engine.
+
+## Checks
+
+```sh
 node --test test/*.test.mjs
 ```
 
-Use a terminal at least 106 columns wide for the two-pane layout; 120 × 38 is recommended. At 76–105 columns the app uses one pane. An 80 × 24 terminal uses a compact header. Windows Terminal, macOS Terminal and Linux terminals with ANSI support are suitable.
+Tests cover exact thresholds, expiry, task caps, persistence, demo isolation, virtual accounting, data errors, cloud credential isolation and concurrent claims. Live provider availability and real holder unlocks need credentials and the actual token contract.
 
-## Controls
+## Pro Terminal and Session Guardian
 
-| Key         | Action                                                  |
-| ----------- | ------------------------------------------------------- |
-| 1–8         | Radar, creator, watchlist, weather, clones, game, daily, research |
-| :           | Enter a research command; Enter submits, Esc cancels |
-| ← →         | Switch Alerts / Changes / Wallets / Paper on desk 8 |
-| ↑ ↓ / j k   | Select a row; scroll open evidence or help                  |
-| PgUp / PgDn | Jump 10 records                                         |
-| /           | Filter names, tickers, addresses; empty input clears    |
-| D           | Paste a token contract to find its creator              |
-| Enter / I   | Open the complete evidence report   |
-| Esc         | Close evidence/help or cancel input                     |
-| Ctrl-U      | Clear the current text input                            |
-| W / Space   | Toggle local watchlist                                  |
-| U / N       | Higher/lower prediction on game desk                    |
-| E           | Export daily text and JSON into the data directory      |
-| P / R       | Pause collection / refresh                              |
-| ?           | Help                                                    |
-| Q / Ctrl-C  | Save and exit; restore terminal                         |
+The **Pro terminal** tab combines a fresh-quote market tape, 24-hour change heatmap, market breadth, liquidity distribution, alert inbox, paper equity and a position-sizing calculator. All panels use the observed token sample, not whole-chain statistics. Demo mode stays clearly marked as simulated.
 
-## What is real, what is limited
+Your silver sheriff now has larger eyes, little cheek highlights, a curious head tilt and a resting expression during breaks.
 
-- Reads confirmed `TokenLaunched` logs from the configured Pons factory on chain **4663**, with a 12-block lag. First scan covers up to 2,000 recent blocks; subsequent scans advance from the saved cursor. A failed scan does not advance it. This is an observation archive, not all historical launches.
-- Retains up to 5,000 launches locally. Dev Counter counts only this retained history. No inference of real-world identity, shared ownership or fraud.
-- Market updates use DEX Screener in batches of 30. Unindexed tokens have unknown prices. Up to 100 watched/newest tokens are refreshed; other prices retain their original observation timestamps.
-- On-demand checks report source verification, holder count, the first ten listed holder balances as a fraction of total supply, and proxy implementation listings. Pools/contracts are included. Mint restrictions, transfer taxes, honeypots and liquidity locks are **not checked**; no safety score is fabricated.
-- Weather uses stored 24h changes and needs at least five readings. Daily counts first observations in UTC, not exact deployment-day totals. Clone detection covers the latest 500 retained records, capped at 150 pairs. Similarity is not evidence of fraud.
-- Guess the Move is a local game with one five-minute round, no stakes and no prizes. Uses the first observed same-pool quote within two minutes after the deadline. Missing quotes void the round; leaving the app closed can void it. Provider prices may lag. Local scores are not tamperproof rankings.
-- DEMO never accesses the network and uses a separate state file. Demo round settlement is synthetic and does not measure prediction skill.
+Session Guardian defaults to **45 minutes of visible use**, **5% paper-equity drawdown** and a **10-minute break**. Configure these limits in Pro Terminal. Visible browser heartbeats track approximate foreground time, excluding gaps longer than 30 seconds. Multiple windows do not multiply elapsed time. Paper equity includes cash plus fresh, same-pool modeled liquidation values; unknown quotes produce an unknown balance, never an invented loss.
 
-## Local data and privacy
+When a limit is reached, new paper positions and prediction games pause on the local backend. Reading information and closing positions remain available. After the countdown, press **Resume practice**. The cooldown survives restarting the app and cannot be shortened through the settings while active. This is a local self-discipline feature, not tamper-proof enforcement, medical fatigue detection, real-wallet PnL monitoring, or a restriction on external trading.
 
-Files live in `~/.sheriff-cat` (override with `--data-dir PATH`). State is atomically replaced and access permissions are restricted where the OS supports them. A process lock prevents two apps from overwriting the same file. After a crash, check that the old process has stopped before removing the indicated `.lock` file. Corrupt data is not silently reset.
+The position calculator uses budget × risk percentage ÷ stop percentage. It is arithmetic, not a recommended position or guaranteed loss ceiling.
 
-Tokens can contain malicious text; the renderer strips non-ASCII control characters and clips output. API keys are sent only to `api.blockscout.com` in the Authorization header; the market provider never receives them. No telemetry, server or login on SHERIFF CAT is required. Your API/provider quotas still apply; reads are paced and transient errors back off.
+![Pro Terminal](docs/screenshots/06-pro-terminal.png)
 
-## Quick start по-русски
+![Session Guardian break](docs/screenshots/07-session-break.png)
 
-1. Установите Node.js версии 22 или новее.
-2. Скачайте репозиторий через **Code → Download ZIP** и распакуйте его.
-3. Откройте терминал в распакованной папке и выполните `node bin/sheriff.mjs --demo`.
-4. Для настоящих данных создайте свой PRO API-ключ в [Blockscout](https://dev.blockscout.com/), запустите `node bin/sheriff.mjs` и вставьте ключ в скрытый ввод.
-5. Переключайте вкладки клавишами **1–8**, выбирайте монету стрелками, **Enter** открывает досье, **W** добавляет в избранное, **?** показывает справку.
+## Dense field terminal
 
-Подключать кошелёк не нужно. Это отдельная программа для компьютера; браузер и сайт для её работы не требуются. Неизвестные показатели остаются неизвестными: программа не выдаёт токену фиктивный рейтинг безопасности.
+Pro Terminal now offers a black/silver monospace observation desk: selectable token stream, target scope, rotating scope indicator, timestamped event tape, session guardian and collapsible advanced tools. Use a token button to select it; open its dossier or add it to your watchlist from Target Scope. Pause Tape freezes the event list, not market collection or risk monitoring.
 
-## Troubleshooting
+The local UI reads state every 750 ms. The engine targets a one-second cycle and requests one rotating market batch of up to 30 tokens per cycle. Network latency, provider backoff, batch rotation and the existing 12-block launch confirmation delay affect actual freshness. No sub-second upstream delivery is guaranteed.
 
-| Symptom | What to check |
-| --- | --- |
-| `node` is not found | Install Node.js 22+ and reopen your terminal. |
-| Small screen warning | Enlarge the terminal to at least 80 × 24; 120 × 38 is more comfortable. |
-| 401 / 403 | Check your personal Blockscout PRO key and access to chain 4663. |
-| 429 | Your provider quota applies. Wait for the cooldown; repeated refreshes do not bypass it. |
-| Empty radar | Wait for a successful confirmed-block scan. The initial window is recent, not the entire chain history. |
-| Missing price or holders | The provider may not have indexed that contract/pool. Unknown is not zero. |
-| Wrong chain | Use a provider supporting the configured Robinhood Chain ID 4663. |
-| Corrupt state | Back up the indicated JSON file before repairing it; the app will not silently erase your archive. |
-| Existing lock | Close the other process. Only remove a stale lock after confirming it is no longer running. |
+Demo mode now evolves simulated quotes each engine tick and introduces a new simulated token every eight ticks, capped at 120 tokens. Paper trading uses those simulated quotes. Real mode never generates fictional launches or prices. The event tape records changes, first quotes and activity-verdict transitions, with a bounded history of 60 quotes per tracked token.
 
-Run `node bin/sheriff.mjs --doctor` for provider diagnostics. It checks connectivity and chain identity, not every market's data quality.
+WATCH CANDIDATES ranks the first 120 observed tokens with four disclosed filters: quote age under 120 seconds, at least $10,000 liquidity, 24h volume/liquidity >= 0.5, and 24h change between -15% and +35%. WATCH means these activity filters match, not that a token is safe or will rise. Contract research remains separately requested.
 
-## Development and verification
+![Dense field terminal](docs/screenshots/09-field-terminal.png)
 
-```sh
-npm test
-node bin/sheriff.mjs --demo --snapshot
-python3 test/pty_smoke.py
-```
+### Platform-specific builds
 
-The Python pseudoterminal check runs on macOS/Linux. GitHub Actions runs Node tests and snapshot startup on Linux, macOS and Windows with Node 22 and 24; keyboard integration runs on Linux/macOS.
-
-Tests cover archive validation and locking, rendering, clone selection, quote identity, game settlement, API failure handling and credential isolation. The keyboard integration exercises navigation, filtering, creator lookup, watchlist persistence, predictions, daily export and clean shutdown. API tests use controlled responses: passing them does **not** certify current external provider availability or your key's permissions.
-
-## Research Desk (v0.2.0)
-
-Select a token in Radar, then press **8**. Your selected token stays fixed while you scroll this desk. Use **Left/Right** for its four pages, **Up/Down** to scroll and **:** to type a command. Commands also work directly from Radar. The examples below include the `:` key you press to open the command input.
-
-| Command | Result |
-| --- | --- |
-| `:alert liquidity>=20000,volume>50000` | Alert for the selected token when **both** conditions become true. |
-| `:alert all change>10,buys>=20` | Apply a rule to tokens with fresh market observations in the monitored sample. |
-| `:unalert ID` | Remove a rule using its displayed eight-character ID. |
-| `:alerts` / `:changes` / `:wallets` / `:paper` | Open the corresponding research page. |
-| `:wallet 0x...` | Monitor a public address; paste the full address. |
-| `:unwallet 0x...` | Stop monitoring an address. |
-| `:size 100 30 50` | Model a $100 entry, 30 bps fee and 50 bps additional slippage. |
-| `:paper 100 10 20 30 50` | Open a $100 virtual position: 10% stop, 20% target, 30 bps fee, 50 bps additional slippage. |
-| `:close ID` | Close an open virtual position at the next available modeled fill. |
-
-**1 basis point (bps) = 0.01%.** Fees/slippage default to 30/50 bps; stop/target default to 10/20%. No money moves. API keys remain personal and memory-only.
-
-### Signals and changes
-
-Rules accept `price` (USD), `liquidity` (USD), `volume` (rolling 24-hour USD volume), `change` (24-hour percentage change), and `buys` (one-hour buy transaction count, **not unique buyers**). Supported operators: `>`, `>=`, `<`, `<=`; comma-separated conditions use AND. Matches appear in the persistent Alerts list and status/event line. They do not repeat until a fresh known observation fails the conditions and a later one passes. Missing fields do not rearm the alert.
-
-Up to 50 rules are stored. Rules on a particular token add it to the polling set. An `all` rule covers the sampled tokens being refreshed, **not the whole chain**. Providers can lag; alerts require a locally observed price no older than 120 seconds. Notifications are in the terminal, not Telegram/email or OS push; the program must be running.
-
-Changes compare consecutive saved market observations, including the last observation from the previous session. Price changes of at least 3% and liquidity/rolling-volume changes of at least 10% enter the log. A pool switch is labeled and resets the comparison. This is sampled history, not every transaction, and small consecutive changes are not accumulated. Latest 300 alerts and 300 changes are retained. Press **E** to export the daily report plus the research state in JSON.
-
-### Public address monitoring
-
-Up to 10 addresses, checked about once a minute while collection is active. Reads the latest 50 token transfers from each address via Blockscout. The first read is labeled HISTORY; later observations are deduplicated by transaction/log identity. If the provider returns another page, the UI explicitly reports a partial window. Transfers can be missed during heavy activity or downtime; this is not a full backfill. Latest 500 transfers are retained. Amounts use token decimals when available, otherwise they are labeled raw units. IN/OUT means a transfer direction, **not a decoded buy/sell or proof of trader profitability**. Reorganizations and provider indexing can affect the feed.
-
-### Size model and paper positions
-
-The model assumes an equal-value constant-product pool with quote-side reserve `R = reported USD liquidity / 2`. For an entry amount `A`, fee fraction `f`, additional slippage fraction `s`, and spot price `P`, estimated tokens are `(R/P) × A(1−f) / (R + A(1−f)) × (1−s)`. Selling applies the reverse curve and both exit costs. The displayed curve premium is `A(1−f)/R` and is distinct from the all-in cost.
-
-**This is a hypothetical scenario, not an executable router quote.** Actual reserves/pool type are not verified; concentrated liquidity, taxes, gas, MEV and routing are not modeled. No result is shown if fresh price or positive liquidity is missing. Your selected fee and slippage assumptions are stored with the position.
-
-Paper cash starts at **$10,000**, with up to 20 open positions and 200 retained position records. Stops/targets are percentages of entry **spot price**. Net PnL includes modeled entry/exit costs. Automatic exits use a fresh observed quote from the original pool, even if it has already moved past your target/stop; they do not invent fills exactly at the threshold. No candles or intrapoll highs/lows are inferred. If the pool or fresh data is unavailable, the position stays open and is marked stale. On restart, evaluation resumes at the next available observation; it cannot reconstruct missed exits. Paper monitoring continues while launch collection is paused, but stops when the app closes. DEMO prices are synthetic and are not backtest results.
-
-### Combined dossier
-
-**Enter** opens the selected token's contract address, creator, creator-launch count in the retained archive, price, liquidity, pool identity, market observation time, evidence check time, verification status, first-ten-listed-holder concentration, proxy information and source coverage. Missing checks stay UNKNOWN / NOT CHECKED; no safety percentage is invented.
-
-Provider schema references: [DEX Screener API](https://docs.dexscreener.com/api/reference), [Blockscout address controller](https://github.com/blockscout/blockscout/blob/master/apps/block_scout_web/lib/block_scout_web/controllers/api/v2/address_controller.ex).
-
-The application is read-only. It does not sign transactions, execute trades or promise returns. SHERIFF CAT's own token receives no special safety exemption.
+`npm run dist:win` builds a Windows x64 NSIS installer. `npm run dist:mac` builds separate Apple Silicon and Intel Mac installers. End users download the installer for their platform; Node.js is bundled with the app. Unsigned preview builds may show operating-system security warnings.
