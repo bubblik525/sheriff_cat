@@ -177,3 +177,9 @@ WATCH CANDIDATES ranks the first 120 observed tokens with four disclosed filters
 ### Platform-specific builds
 
 `npm run dist:win` builds a Windows x64 NSIS installer. `npm run dist:mac` builds separate Apple Silicon and Intel Mac installers. End users download the installer for their platform; Node.js is bundled with the app. Unsigned preview builds may show operating-system security warnings.
+
+## Little sheriffs, everywhere
+
+Your companion overview keeps the main pet characteristics. Working tabs use the full width, with three small monochrome sheriff cats floating above the workspace: Mochi rolls over for a belly rub, Pip shyly retreats, and Nori nudges a panel before returning it to its original position. The cats stroll occasionally, respond to pointer or keyboard activation, and rest during a session break. Reduced-motion mode disables their movement. They are visual companions, not AI agents.
+
+![Little sheriffs in the terminal](docs/screenshots/11-roaming-sheriffs.png)

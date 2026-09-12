@@ -33,6 +33,7 @@ export async function startCompanion({
   const files = {
     '/': ['index.html', 'text/html'],
     '/app.js': ['app.js', 'text/javascript'],
+    '/pets.js': ['pets.js', 'text/javascript'],
     '/style.css': ['style.css', 'text/css'],
     '/cat.svg': ['cat.svg', 'image/svg+xml'],
   };

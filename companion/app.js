@@ -418,6 +418,8 @@ function render(full = true) {
     : state.clue;
   document.body.classList.toggle('on-break', !!state.guard?.locked);
   document.body.classList.toggle('pro-mode', tab === 'pro');
+  document.body.classList.toggle('pet-home', tab === 'cat');
+  window.dispatchEvent(new CustomEvent('sheriff-pets',{detail:{tab,locked:!!state.guard?.locked,name:state.pet.name,clue:state.clue}}));
   $('.status-pip').textContent = state.guard?.locked ? '◌ RESTING' : '● AWAKE';
   $('.speech>span').textContent =
     '✦ ' + state.pet.name.toUpperCase() + '’S FIELD NOTE';
